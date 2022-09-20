@@ -5,7 +5,8 @@ import rospkg
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
-from python_qt_binding.QtWidgets import QWidget
+from python_qt_binding.QtWidgets import QWidget, QPushButton
+
 
 class MyPlugin(Plugin):
 
@@ -14,24 +15,24 @@ class MyPlugin(Plugin):
         # Give QObjects reasonable names
         self.setObjectName('MyPlugin')
 
-        # Process standalone plugin command-line arguments
-        from argparse import ArgumentParser
-        parser = ArgumentParser()
-        # Add argument(s) to the parser.
-        parser.add_argument("-q", "--quiet", action="store_true",
-                      dest="quiet",
-                      help="Put plugin in silent mode")
-        args, unknowns = parser.parse_known_args(context.argv())
-        if not args.quiet:
-            print('arguments: ', args)
-            print('unknowns: ', unknowns)
-
         # Create QWidget
         self._widget = QWidget()
         # Get path to UI file which should be in the "resource" folder of this package
         ui_file = os.path.join(rospkg.RosPack().get_path('rqt_mypkg'), 'resource', 'MyPlugin.ui')
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
+
+        # Adding behaviour to objects
+        # Get the object of "Command" QPushButton
+        #children = self._widget.findChildren(QPushButton,"Command")
+        # Connect the button with slot
+        #children[0].clicked.connect(self.command_slot)
+        self._widget.Command.clicked.connect(self.command_slot)
+        #self._widget.Command.clicked[bool].connect(self.command_slot)
+        # Log information about signal and slot connection
+        rospy.loginfo('Connected %s %s with %s slot'%(self._widget.Command.objectName(),QPushButton.__name__, self.command_slot.__name__))
+
+
         # Give QObjects reasonable names
         self._widget.setObjectName('MyPluginUi')
         # Show _widget.windowTitle on left-top of each plugin (when 
@@ -43,6 +44,11 @@ class MyPlugin(Plugin):
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
         # Add widget to the user interface
         context.add_widget(self._widget)
+
+    def command_slot(self):
+        rospy.loginfo('Clicked %s'%(self.command_slot.__name__))
+        pass
+
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
