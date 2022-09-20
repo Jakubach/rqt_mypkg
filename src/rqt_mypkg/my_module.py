@@ -2,10 +2,12 @@
 import os
 import rospy
 import rospkg
+import cv2 as cv
 
 from qt_gui.plugin import Plugin
-from python_qt_binding import loadUi
-from python_qt_binding.QtWidgets import QWidget, QPushButton
+from python_qt_binding import loadUi, QtGui, QtCore
+from QtCore import Qt
+from python_qt_binding.QtWidgets import QWidget, QPushButton, QLabel
 
 
 class MyPlugin(Plugin):
@@ -18,7 +20,7 @@ class MyPlugin(Plugin):
         # Create QWidget
         self._widget = QWidget()
         # Get path to UI file which should be in the "resource" folder of this package
-        ui_file = os.path.join(rospkg.RosPack().get_path('rqt_mypkg'), 'resource', 'MyPlugin.ui')
+        ui_file = os.path.join(rospkg.RosPack().get_path('rqt_mypkg'), 'resource', 'MyPluginExtended.ui')
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
 
@@ -31,7 +33,6 @@ class MyPlugin(Plugin):
         #self._widget.Command.clicked[bool].connect(self.command_slot)
         # Log information about signal and slot connection
         rospy.loginfo('Connected %s %s with %s slot'%(self._widget.Command.objectName(),QPushButton.__name__, self.command_slot.__name__))
-
 
         # Give QObjects reasonable names
         self._widget.setObjectName('MyPluginUi')
@@ -47,6 +48,18 @@ class MyPlugin(Plugin):
 
     def command_slot(self):
         rospy.loginfo('Clicked %s'%(self.command_slot.__name__))
+        camera = cv.VideoCapture(0)
+        ret, frame = camera.read()
+        height, width = frame.shape[:2]
+        frame_disp = QtGui.QImage(
+            frame.data, width, height, QtGui.QImage.Format_RGB888
+        )
+        pix_map = QtGui.QPixmap.fromImage(frame_disp)
+        self._widget.ImageFrame.setPixmap(pix_map.scaled(self._widget.ImageFrame.width(),self._widget.ImageFrame.height(),Qt.KeepAspectRatio))
+        #scene = QGraphicsScene()
+        #scene.addPixmap(pix_map)
+        #self._widget.GraphicsView.setScene(pix_map)
+        
         pass
 
 
