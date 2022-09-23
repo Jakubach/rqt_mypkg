@@ -8,7 +8,7 @@ import cv2 as cv
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi, QtGui, QtCore
-from QtCore import Qt,Signal
+from QtCore import Qt
 from python_qt_binding.QtWidgets import QWidget, QPushButton, QLabel
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
