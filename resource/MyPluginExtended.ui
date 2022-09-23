@@ -33,10 +33,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Command">
+       <widget class="QPushButton" name="CommandA">
         <property name="text">
-         <string>Command</string>
+         <string>Command A</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CommandB">
+        <property name="text">
+         <string>Command B</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="TopicsList">
        </widget>
       </item>
       <item>
@@ -51,6 +65,7 @@
    </layout>
   </widget>
  </widget>
+ 
  <resources/>
  <connections/>
 </ui>
